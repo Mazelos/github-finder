@@ -5,7 +5,7 @@ import Card from './Card';
 import ListSeparator from './tools/ListSeparator';
 import ItemDelete from './tools/ItemDelete';
 
-const CardList = ({ profiles, onItemDelete, onRefresh }) => {
+const CardList = ({ profiles, onItemDelete, onRefresh, onShowUserInfo }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   return (
@@ -15,9 +15,8 @@ const CardList = ({ profiles, onItemDelete, onRefresh }) => {
         keyExtractor={(profile) => profile.id.toString()}
         renderItem={({ item }) => (
           <Card
-            renderRightActions={() => (
-              <ItemDelete onPress={() => onItemDelete(item.id)} />
-            )}
+            renderRightActions={() => <ItemDelete onPress={() => onItemDelete(item.id)} />}
+            onShowUserInfo={onShowUserInfo}
             {...item}
           />
         )}

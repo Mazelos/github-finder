@@ -4,17 +4,15 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 
 import AppText from "../components/tools/AppText";
 import colors from "../config/colors";
-import UserInfo from './UserInfo';
 
 // access the information we need from each profile passed
 const Card = (props) => {
-  const [showProfile, setShowProfile] = useState(false);
-  
+  const handleOnPressCard = () => props.onShowUserInfo(props.id);
+
   return (
-    <>
       <Swipeable renderRightActions={props.renderRightActions && props.renderRightActions}>
         <TouchableOpacity
-          onPress={() => setShowProfile(true)}
+          onPress={handleOnPressCard}
           style={styles.cardContainer}
         >
           <Image source={{ uri: props.avatar_url }} style={styles.profileImage} />
@@ -24,16 +22,6 @@ const Card = (props) => {
           </View>
         </TouchableOpacity>
       </Swipeable>
-      <Modal
-        visible={showProfile}
-        onRequestClose={() => setShowProfile(false)}
-        statusBarTranslucent
-        animationType="slide"
-        hardwareAccelerated
-      >
-        <UserInfo {...props} onPressCloseButton={() => setShowProfile(false)}/>
-      </Modal>
-    </>
   );
 };
 

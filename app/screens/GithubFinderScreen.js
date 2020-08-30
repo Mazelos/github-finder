@@ -1,68 +1,98 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import { View, StyleSheet, Modal } from 'react-native';
 
 import AppText from '../components/tools/AppText';
 import UserForm from '../components/UserForm';
 import CardList from '../components/CardList';
-
-class GithubUsers extends React.Component {
-  // store all the profiles got from gitHub here
-  state = {
-    profiles: [],
-    idStore: [],
-  };
-  
+import UserInfo from './UserInfo';
+const GithubUsers = () => {
+  // states 
+  const [profiles, setProfiles] = useState([]);
+  const [profilesId, setProfilesId] = useState([]);
+  const [showUserInfo, setShowUserInfo] = useState(false); 
+  const [userInfoToShow, setUserInfoToShow] = useState({});
 
   // append the new profiles
-  addNewProfile = (profileData) => {
+  const addNewProfile = (profileData) => {
     if (profileData.error) {
       console.log(profileData.error);
       return;
     }
-    if (this.state.idStore.includes(profileData.id)) {
+    if (profilesId.includes(profileData.id)) {
       return;
     }
-
-    this.setState((prevState) => ({
-      profiles: [...prevState.profiles, profileData],
-      idStore: [...prevState.idStore, profileData.id],
-    }));
+    // add the new profile
+    setProfiles(currentProfiles => [...currentProfiles, profileData]);
+    // update the profilesId 
+    setProfilesId(currentProfilesId => [...currentProfilesId, profileData.id])
   };
 
   // delete an item from the list 
-  deleteProfile = (profileId) => {
-    if (!this.state.idStore.includes(profileId)) {
+  const deleteProfile = (profileId) => {
+    if (!profilesId.includes(profileId)) {
       return;
     }
-    this.setState((prevState) => ({
-      profiles: prevState.profiles.filter(
-        (profile) => profile.id !== profileId
-      ),
-      idStore: prevState.idStore.filter(
-        (id) => id !== profileId
-      )
-    }));
+    setProfiles(currentProfiles => currentProfiles.filter(profile => profile.id !== profileId));
+    setProfiles(currentProfilesId => currentProfilesId.filter(id => id !== profileId));
   }
 
   // handling refresh action - reset the list 
-  refreshProfiles = () => {
-    this.setState({
-      profiles: [],
-      idStore:[],
-    });
+  const refreshProfiles = () => {
+    setProfiles([]);
+    setProfilesId([]);
   }
 
-  render() {
-    return (
+  // open modal to show user info...
+  const handleOnShowUserInfo = profileId => {
+    if (!profilesId.includes(profileId)) {
+      return;
+    }
+    setUserInfoToShow(profiles.find( profile => profile.id === profileId));
+    setShowUserInfo(true);
+  }
+
+  const handleOnCloseUserInfo = () => {
+    setShowUserInfo(false);
+    setUserInfoToShow({});
+  }
+
+  return (
+    <>
       <View style={styles.container}>
         <View style={styles.header}>
           <AppText fontSize={40} style={styles.title}>Github Finder</AppText>
-          <UserForm onSubmit={this.addNewProfile} />
+          <UserForm onSubmit={addNewProfile} />
         </View>
-        <CardList profiles={this.state.profiles} onItemDelete={this.deleteProfile} onRefresh={this.refreshProfiles}/>
+        <CardList profiles={profiles} onItemDelete={deleteProfile} onRefresh={refreshProfiles} onShowUserInfo={handleOnShowUserInfo}/>
       </View>
-    );
-  }
+      <Modal
+        visible={showUserInfo}
+        onRequestClose={handleOnCloseUserInfo}
+        statusBarTranslucent
+        animationType="slide"
+        hardwareAccelerated
+      >
+        <UserInfo 
+          mainInfo={{
+            imageSource: userInfoToShow.avatar_url,
+            loginName: userInfoToShow.login,
+            githubLink: userInfoToShow.html_url,
+            bio: userInfoToShow.bio,
+            followers: userInfoToShow.followers,
+            following: userInfoToShow.following
+          }}
+          otherInfo={[
+            userInfoToShow.name,
+            userInfoToShow.location,
+            userInfoToShow.company,
+            userInfoToShow.email,
+          ]}
+          links={[userInfoToShow.blog, userInfoToShow.organizations_url]}
+          onPressCloseButton={handleOnCloseUserInfo}
+        />
+      </Modal>
+    </>
+  );
 }
 
 const styles = StyleSheet.create({

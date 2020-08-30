@@ -3,27 +3,12 @@ import { View, TouchableWithoutFeedback, ScrollView, Image, StyleSheet } from "r
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 
-import SafeScreen from './tools/SafeScreen';
-import AppText from './tools/AppText';
+import SafeScreen from '../components/tools/SafeScreen';
+import AppText from '../components/tools/AppText';
 import colors from '../config/colors';
 import urlFormatter from '../utils/urlFormatter';
 
-const UserInfo = ({
-  avatar_url,
-  login,
-  html_url,
-  bio,
-  followers,
-  following,
-  name,
-  location,
-  company,
-  email,
-  blog,
-  organizations_url,
-  onPressCloseButton
-}) => {
-  console.log(urlFormatter(blog), urlFormatter(html_url))
+const UserInfo = ({mainInfo, otherInfo, links, onPressCloseButton}) => {
   return (
     <SafeScreen>
       {/* CLose Icon (absolute position) */}
@@ -39,30 +24,30 @@ const UserInfo = ({
         </TouchableWithoutFeedback>
 
         <ScrollView>
-          <Image source={{ uri: avatar_url }} style={styles.image} resizeMethod="scale"/>
+          <Image source={{ uri: mainInfo.imageSource }} style={styles.image} resizeMethod="scale"/>
 
           {/* header content */}
           <View style={styles.contentContainer}>
             <View style={styles.nameContainer}>
               <AppText fontSize={40} textTransform="capitalize" style={styles.nameText}>
-                {login}
+                {mainInfo.loginName}
               </AppText>
-              <TouchableWithoutFeedback onPress={() => WebBrowser.openBrowserAsync(html_url)}>
+              <TouchableWithoutFeedback onPress={() => WebBrowser.openBrowserAsync(mainInfo.githubLink)}>
                 <View>
                   <AppText color={colors.buttonColor}>Open in Github</AppText>
                 </View>
               </TouchableWithoutFeedback>
             </View>
             <View style={styles.bioContainer}>
-              {bio && <AppText style={styles.text}>{bio}</AppText>}
+              {mainInfo.bio && <AppText style={styles.text}>{mainInfo.bio}</AppText>}
               <View>
                 <View style={styles.detailsContainer}>
                   <AppText textTransform="capitalize" fontSize={21} style={styles.detailsText}>followers</AppText>
-                  <AppText>{followers}</AppText>
+                  <AppText>{mainInfo.followers}</AppText>
                 </View>
                 <View style={styles.detailsContainer}>
                   <AppText textTransform="capitalize" fontSize={21} style={styles.detailsText}>following</AppText>
-                  <AppText>{following}</AppText>
+                  <AppText>{mainInfo.following}</AppText>
                 </View>
               </View>
             </View>
@@ -70,48 +55,23 @@ const UserInfo = ({
           
           {/* main content */}
           <View style={styles.contentContainer}>
-            {name && (
-              <View style={styles.detailsContainer}>
-                <AppText fontSize={22} style={styles.detailsText}>name</AppText>
-                <AppText style={styles.text}>{name}</AppText>
+            {otherInfo.map(info => (
+              <View style={styles.detailsContainer} key={info}>
+                <AppText fontSize={22} style={styles.detailsText}>{info}</AppText>
+                {/* <AppText style={styles.text}>{name}</AppText> */}
               </View>
-            )}
-            {location && (
-              <View style={styles.detailsContainer}>
-                <AppText fontSize={22} style={styles.detailsText}>location</AppText>
-                <AppText style={styles.text}>{location}</AppText>
-              </View>
-            )}
-            {company && (
-              <View style={styles.detailsContainer}>
-                <AppText fontSize={22} style={styles.detailsText}>company</AppText>
-                <AppText style={styles.text}>{company}</AppText>
-              </View>
-            )}
-            {email && (
-              <View style={styles.detailsContainer}>
-                <AppText fontSize={22} style={styles.detailsText}>email</AppText>
-                <AppText style={styles.text}>{email}</AppText>
-              </View>
-            )}
+            ))}
           </View>
           
           {/* footer content */}
           <View style={styles.contentContainer}>
-            {blog !== "" && (
-              <TouchableWithoutFeedback onPress={() => WebBrowser.openBrowserAsync(urlFormatter(blog))}>
+            {links.map(link => (
+              <TouchableWithoutFeedback key={link} onPress={() => WebBrowser.openBrowserAsync(urlFormatter({link}))}>
                 <View style={styles.footerText}>
-                  <AppText color={colors.buttonColor}>Open Blog</AppText>
+                  <AppText color={colors.buttonColor}>{link}</AppText>
                 </View>
               </TouchableWithoutFeedback>
-            )}
-            {organizations_url && (
-              <TouchableWithoutFeedback onPress={() => WebBrowser.openBrowserAsync(organizations_url)}>
-                <View>
-                  <AppText color={colors.buttonColor}>Open Organizations</AppText>
-                </View>
-              </TouchableWithoutFeedback>
-            )}
+            ))}
           </View>
         </ScrollView>
       </View>
