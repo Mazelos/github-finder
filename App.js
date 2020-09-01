@@ -1,5 +1,4 @@
 import React from 'react';
-import { heightPercentageToDP } from 'react-native-responsive-screen';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';

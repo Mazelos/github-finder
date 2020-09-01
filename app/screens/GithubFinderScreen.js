@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Modal } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import AppText from '../components/tools/AppText';
 import UserForm from '../components/UserForm';
 import CardList from '../components/CardList';
-import UserInfo from './UserInfo';
 
 const GithubUsers = ({navigation}) => {
   // states 

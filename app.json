@@ -22,6 +22,7 @@
     "web": {
       "favicon": "./app/assets/favicon.png"
     },
-    "description": ""
+    "description": "Application to find Github users",
+    "githubUrl": "https://github.com/Mazelos/github-finder.git"
   }
 }
