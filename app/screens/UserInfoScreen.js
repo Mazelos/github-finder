@@ -8,12 +8,14 @@ import AppText from '../components/tools/AppText';
 import colors from '../config/colors';
 import urlFormatter from '../utils/urlFormatter';
 
-const UserInfo = ({mainInfo, otherInfo, links, onPressCloseButton}) => {
+const UserInfo = ({route: {params: {mainInfo, otherInfo, links}}, navigation}) => {
+  const onCloseUserInfo = () => navigation.navigate('home');
+
   return (
     <SafeScreen>
       {/* CLose Icon (absolute position) */}
       <View style={styles.container}>
-        <TouchableWithoutFeedback onPress={onPressCloseButton}>
+        <TouchableWithoutFeedback onPress={onCloseUserInfo}>
           <View style={styles.closeIcon}>
             <MaterialCommunityIcons
               name="close"

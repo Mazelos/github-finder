@@ -5,12 +5,11 @@ import AppText from '../components/tools/AppText';
 import UserForm from '../components/UserForm';
 import CardList from '../components/CardList';
 import UserInfo from './UserInfo';
-const GithubUsers = () => {
+
+const GithubUsers = ({navigation}) => {
   // states 
   const [profiles, setProfiles] = useState([]);
   const [profilesId, setProfilesId] = useState([]);
-  const [showUserInfo, setShowUserInfo] = useState(false); 
-  const [userInfoToShow, setUserInfoToShow] = useState({});
 
   // append the new profiles
   const addNewProfile = (profileData) => {
@@ -42,56 +41,44 @@ const GithubUsers = () => {
     setProfilesId([]);
   }
 
-  // open modal to show user info...
+  // navigate to userInfoScreen and pass some info
   const handleOnShowUserInfo = profileId => {
     if (!profilesId.includes(profileId)) {
       return;
     }
-    setUserInfoToShow(profiles.find( profile => profile.id === profileId));
-    setShowUserInfo(true);
-  }
-
-  const handleOnCloseUserInfo = () => {
-    setShowUserInfo(false);
-    setUserInfoToShow({});
+    const userToShow = profiles.find( profile => profile.id === profileId);
+    navigation.navigate('user-info', {
+      mainInfo : {
+        imageSource: userToShow.avatar_url,
+        loginName: userToShow.login,
+        githubLink: userToShow.html_url,
+        bio: userToShow.bio,
+        followers: userToShow.followers,
+        following: userToShow.following
+      },
+      otherInfo : [
+        userToShow.name,
+        userToShow.location,
+        userToShow.company,
+        userToShow.email,
+      ],
+      links : [userToShow.blog, userToShow.organizations_url]
+    });
   }
 
   return (
-    <>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <AppText fontSize={40} style={styles.title}>Github Finder</AppText>
-          <UserForm onSubmit={addNewProfile} />
-        </View>
-        <CardList profiles={profiles} onItemDelete={deleteProfile} onRefresh={refreshProfiles} onShowUserInfo={handleOnShowUserInfo}/>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <AppText fontSize={40} style={styles.title}>Github Finder</AppText>
+        <UserForm onSubmit={addNewProfile} />
       </View>
-      <Modal
-        visible={showUserInfo}
-        onRequestClose={handleOnCloseUserInfo}
-        statusBarTranslucent
-        animationType="slide"
-        hardwareAccelerated
-      >
-        <UserInfo 
-          mainInfo={{
-            imageSource: userInfoToShow.avatar_url,
-            loginName: userInfoToShow.login,
-            githubLink: userInfoToShow.html_url,
-            bio: userInfoToShow.bio,
-            followers: userInfoToShow.followers,
-            following: userInfoToShow.following
-          }}
-          otherInfo={[
-            userInfoToShow.name,
-            userInfoToShow.location,
-            userInfoToShow.company,
-            userInfoToShow.email,
-          ]}
-          links={[userInfoToShow.blog, userInfoToShow.organizations_url]}
-          onPressCloseButton={handleOnCloseUserInfo}
-        />
-      </Modal>
-    </>
+      <CardList 
+        profiles={profiles} 
+        onItemDelete={deleteProfile} 
+        onRefresh={refreshProfiles} 
+        onShowUserInfo={handleOnShowUserInfo}
+      />
+    </View>
   );
 }
 
