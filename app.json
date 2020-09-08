@@ -19,10 +19,14 @@
     "ios": {
       "supportsTablet": true
     },
+    "android": {
+      "package": "samSapi0l.githubFinder",
+      "versionCode": 1
+    },
+    "description": "Application to find Github users",
     "web": {
       "favicon": "./app/assets/favicon.png"
     },
-    "description": "Application to find Github users",
     "githubUrl": "https://github.com/Mazelos/github-finder.git"
   }
 }
